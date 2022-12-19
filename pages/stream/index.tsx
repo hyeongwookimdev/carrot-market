@@ -2,13 +2,11 @@ import { NextPage } from "next";
 
 const Live: NextPage = () => {
   return (
-    <div className="py-10 space-y-4 divide-y-2">
+    <div className="py-10 space-y-4 divide-y-[1px]">
       {[1, 2, 3, 4, 5, 6, 7].map((_, index) => (
         <div key={index} className="px-4 pt-4">
           <div className="bg-slate-300 w-full rounded-md shadow-sm aspect-video" />
-          <h3 className="text-gray-700 text-lg mt-2">
-            금요일에는 맛있는 삼겹살을 즐겨주세요!
-          </h3>
+          <h1 className="text-2xl mt-2 font-bold text-gray-900">Galaxy S50</h1>
         </div>
       ))}
       <button className="fixed hover:bg-orange-500 transition-colors cursor-pointer bottom-24 right-5 shadow-xl bg-orange-400 rounded-full p-4 text-white border-transparent">
