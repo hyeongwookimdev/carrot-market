@@ -77,7 +77,7 @@ export default function Layout({
             <a
               className={cls(
                 "flex flex-col items-center space-y-2 ",
-                router.pathname === "/"
+                router.pathname === "/community"
                   ? "text-orange-500"
                   : "hover:text-gray-500 transition-colors"
               )}
@@ -103,7 +103,7 @@ export default function Layout({
             <a
               className={cls(
                 "flex flex-col items-center space-y-2 ",
-                router.pathname === "/"
+                router.pathname === "/chats"
                   ? "text-orange-500"
                   : "hover:text-gray-500 transition-colors"
               )}
@@ -129,7 +129,7 @@ export default function Layout({
             <a
               className={cls(
                 "flex flex-col items-center space-y-2 ",
-                router.pathname === "/"
+                router.pathname === "/stream"
                   ? "text-orange-500"
                   : "hover:text-gray-500 transition-colors"
               )}
@@ -155,7 +155,7 @@ export default function Layout({
             <a
               className={cls(
                 "flex flex-col items-center space-y-2 ",
-                router.pathname === "/"
+                router.pathname === "/profile"
                   ? "text-orange-500"
                   : "hover:text-gray-500 transition-colors"
               )}
