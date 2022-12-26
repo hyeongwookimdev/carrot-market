@@ -1,6 +1,6 @@
 import { NextPage } from "next";
-import Input from "../../components/input";
-import Layout from "../../components/layout";
+import Input from "@components/input";
+import Layout from "@components/layout";
 
 const Edit: NextPage = () => {
   return (
