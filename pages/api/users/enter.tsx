@@ -33,21 +33,21 @@ async function handler(
     },
   });
   if (phone) {
-    const message = await twilioClient.messages.create({
+    /* const message = await twilioClient.messages.create({
       messagingServiceSid: process.env.TWILIO_MSID,
       to: process.env.TWILIO_MY_PHONE!, // phone
       body: `당신의 로그인 토큰은 ${payload} 입니다.`,
     });
-    console.log(message);
+    console.log(message); */
   } else if (email) {
-    const email = await mail.send({
+    /* const email = await mail.send({
       from: "hyeongwookim.dev@gmail.com",
       to: "hyeongwookim.dev@gmail.com",
       subject: "캐럿마켓 인증 메일입니다.",
       text: `당신의 로그인 토큰은 ${payload} 입니다.`,
       html: `<strong>당신의 로그인 토큰은 ${payload} 입니다.</strong>`,
     });
-    console.log(email);
+    console.log(email); */
   }
   return res.json({
     ok: true,
