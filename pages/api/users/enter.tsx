@@ -1,7 +1,10 @@
+import mail from "@sendgrid/mail";
 import twilio from "twilio";
 import client from "@libs/server/client";
 import withHandler, { ResponseType } from "@libs/server/withHandler";
 import { NextApiRequest, NextApiResponse } from "next";
+
+mail.setApiKey(process.env.SENDGRID_API_KEY!);
 
 const twilioClient = twilio(process.env.TWILIO_SID, process.env.TWILIO_TOKEN);
 
@@ -36,6 +39,15 @@ async function handler(
       body: `당신의 로그인 토큰은 ${payload} 입니다.`,
     });
     console.log(message);
+  } else if (email) {
+    const email = await mail.send({
+      from: "hyeongwookim.dev@gmail.com",
+      to: "hyeongwookim.dev@gmail.com",
+      subject: "캐럿마켓 인증 메일입니다.",
+      text: `당신의 로그인 토큰은 ${payload} 입니다.`,
+      html: `<strong>당신의 로그인 토큰은 ${payload} 입니다.</strong>`,
+    });
+    console.log(email);
   }
   return res.json({
     ok: true,
