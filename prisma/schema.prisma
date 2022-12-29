@@ -21,7 +21,7 @@ model User {
   updatedAt DateTime   @updatedAt
   tokens    Token[]
   products  Product[]
-  Favorite  Favorite[]
+  favorite  Favorite[]
 }
 
 model Token {
@@ -45,7 +45,7 @@ model Product {
   userId      Int
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  Favorite    Favorite[]
+  favorite    Favorite[]
 
   @@index([userId])
 }
