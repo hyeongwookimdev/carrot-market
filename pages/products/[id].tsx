@@ -1,8 +1,26 @@
 import type { NextPage } from "next";
 import Button from "@components/button";
 import Layout from "@components/layout";
+import { useRouter } from "next/router";
+import useSWR from "swr";
+import { Product, User } from "@prisma/client";
+import Link from "next/link";
+
+interface ProductWithUser extends Product {
+  user: User;
+}
+interface ItemDetailResponse {
+  ok: boolean;
+  product: ProductWithUser;
+}
 
 const ItemDetail: NextPage = () => {
+  const router = useRouter();
+  const { data } = useSWR<ItemDetailResponse>(
+    router.query.id ? `/api/products/${router.query.id}` : null
+  );
+  console.log(data);
+
   return (
     <Layout canGoBack>
       <div className="px-4 py-4">
@@ -11,24 +29,28 @@ const ItemDetail: NextPage = () => {
           <div className="flex cursor-pointer py-3 border-t border-b items-center space-x-3">
             <div className="w-12 h-12 rounded-full bg-slate-300" />
             <div>
-              <p className="text-sm font-medium text-gray-700">Steve Jebs</p>
-              <p className="text-xs font-medium text-gray-500">
-                View profile &rarr;
+              <p className="text-sm font-medium text-gray-700">
+                {data?.product?.user?.name}
               </p>
+              <Link
+                href={`/users/profiles/${data?.product?.user?.id}`}
+                legacyBehavior
+              >
+                <a className="text-xs font-medium text-gray-500">
+                  View profile &rarr;
+                </a>
+              </Link>
             </div>
           </div>
           <div className="mt-5">
-            <h1 className="text-3xl font-bold text-gray-900">Galaxy S50</h1>
-            <span className="text-3xl block mt-3 text-gray-900">$140</span>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {data?.product?.name}
+            </h1>
+            <span className="text-3xl block mt-3 text-gray-900">
+              ${data?.product?.price}
+            </span>
             <p className="text-base my-6 text-gray-700">
-              Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-              Doloremque quis aspernatur sapiente, quam accusantium dolore
-              officiis velit suscipit. Deserunt corporis consequatur voluptas?
-              Eius aliquam facere velit eaque beatae pariatur doloribus? Lorem
-              ipsum dolor sit, amet consectetur adipisicing elit. Magni harum
-              quia in similique temporibus eveniet ea facere, est rerum
-              explicabo numquam itaque corporis? Saepe, magnam quisquam quae
-              molestias dignissimos voluptatibus?
+              {data?.product?.description}
             </p>
             <div className="flex items-center justify-between space-x-2">
               <Button large text="Talk to seller" />
