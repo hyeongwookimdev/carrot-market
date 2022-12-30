@@ -12,16 +12,19 @@ datasource db {
 }
 
 model User {
-  id        Int        @id @default(autoincrement())
+  id        Int         @id @default(autoincrement())
   name      String
-  phone     String?    @unique
-  email     String?    @unique
+  phone     String?     @unique
+  email     String?     @unique
   avatar    String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
   tokens    Token[]
   products  Product[]
   favorite  Favorite[]
+  post      Post[]
+  answer    Answer[]
+  wondering Wondering[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }
 
 model Token {
@@ -43,9 +46,9 @@ model Product {
   description String     @db.MediumText
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int
+  favorite    Favorite[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  favorite    Favorite[]
 
   @@index([userId])
 }
@@ -61,4 +64,44 @@ model Favorite {
 
   @@index([userId])
   @@index([productId])
+}
+
+model Post {
+  id        Int         @id @default(autoincrement())
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  question  String      @db.MediumText
+  answer    Answer[]
+  wondering Wondering[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([userId])
+}
+
+model Answer {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId    Int
+  answer    String   @db.MediumText
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([postId])
+}
+
+model Wondering {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([postId])
 }
