@@ -27,9 +27,9 @@ model User {
   writtenReviews  Review[]    @relation("writtenReviews")
   receivedReviews Review[]    @relation("receivedReviews")
   review          Review[]
+  favorites       Favorite[]
   sales           Sale[]
   purchases       Purchase[]
-  favorite        Favorite[]
 }
 
 model Token {
@@ -51,9 +51,9 @@ model Product {
   description String     @db.MediumText
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int
-  favorite    Favorite[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+  favorites   Favorite[]
   sales       Sale[]
   purchases   Purchase[]
 
