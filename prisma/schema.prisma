@@ -12,19 +12,24 @@ datasource db {
 }
 
 model User {
-  id        Int         @id @default(autoincrement())
-  name      String
-  phone     String?     @unique
-  email     String?     @unique
-  avatar    String?
-  tokens    Token[]
-  products  Product[]
-  favorite  Favorite[]
-  post      Post[]
-  answer    Answer[]
-  wondering Wondering[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id              Int         @id @default(autoincrement())
+  name            String
+  phone           String?     @unique
+  email           String?     @unique
+  avatar          String?
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  tokens          Token[]
+  products        Product[]
+  posts           Post[]
+  answers         Answer[]
+  wonderings      Wondering[]
+  writtenReviews  Review[]    @relation("writtenReviews")
+  receivedReviews Review[]    @relation("receivedReviews")
+  Review          Review[]
+  sales           Sale[]
+  purchases       Purchase[]
+  favorite        Favorite[]
 }
 
 model Token {
@@ -49,21 +54,10 @@ model Product {
   favorite    Favorite[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+  sales       Sale[]
+  purchases   Purchase[]
 
   @@index([userId])
-}
-
-model Favorite {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([userId])
-  @@index([productId])
 }
 
 model Post {
@@ -106,4 +100,60 @@ model Wondering {
 
   @@index([userId])
   @@index([postId])
+}
+
+model Review {
+  id           Int      @id @default(autoincrement())
+  review       String   @db.MediumText
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  CreatedBy    User     @relation(name: "writtenReviews", fields: [createdById], references: [id], onDelete: Cascade)
+  createdById  Int
+  CreatedFor   User     @relation(name: "receivedReviews", fields: [createdForId], references: [id], onDelete: Cascade)
+  createdForId Int
+  User         User?    @relation(fields: [userId], references: [id])
+  userId       Int?
+
+  @@index([createdById])
+  @@index([createdForId])
+  @@index([userId])
+}
+
+model Sale {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([productId])
+}
+
+model Purchase {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([productId])
+}
+
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([productId])
 }
