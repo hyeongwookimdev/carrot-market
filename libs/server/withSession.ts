@@ -13,7 +13,7 @@ const cookieOptions = {
   password: process.env.COOKIE_PASSWORD!,
 };
 
-// API route애서 session을 받아오기 위한 함수
+// API route에서 session을 받아오기 위한 함수
 export function withApiSession(fn: any) {
   return withIronSessionApiRoute(fn, cookieOptions);
 }

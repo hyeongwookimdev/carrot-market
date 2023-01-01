@@ -26,7 +26,7 @@ model User {
   wonderings      Wondering[]
   writtenReviews  Review[]    @relation("writtenReviews")
   receivedReviews Review[]    @relation("receivedReviews")
-  Review          Review[]
+  review          Review[]
   sales           Sale[]
   purchases       Purchase[]
   favorite        Favorite[]
@@ -105,11 +105,12 @@ model Wondering {
 model Review {
   id           Int      @id @default(autoincrement())
   review       String   @db.MediumText
+  score        Int      @default(1)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  CreatedBy    User     @relation(name: "writtenReviews", fields: [createdById], references: [id], onDelete: Cascade)
+  createdBy    User     @relation(name: "writtenReviews", fields: [createdById], references: [id], onDelete: Cascade)
   createdById  Int
-  CreatedFor   User     @relation(name: "receivedReviews", fields: [createdForId], references: [id], onDelete: Cascade)
+  createdFor   User     @relation(name: "receivedReviews", fields: [createdForId], references: [id], onDelete: Cascade)
   createdForId Int
   User         User?    @relation(fields: [userId], references: [id])
   userId       Int?
