@@ -26,12 +26,12 @@ model User {
   wonderings      Wondering[]
   writtenReviews  Review[]    @relation("writtenReviews")
   receivedReviews Review[]    @relation("receivedReviews")
-  review          Review[]
+  reviews         Review[]
   favorites       Favorite[]
   sales           Sale[]
   purchases       Purchase[]
-  stream          Stream[]
-  message         Message[]
+  streams         Stream[]
+  messages        Message[]
 }
 
 model Token {
@@ -63,16 +63,16 @@ model Product {
 }
 
 model Post {
-  id        Int         @id @default(autoincrement())
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    Int
-  question  String      @db.MediumText
-  answer    Answer[]
-  wondering Wondering[]
-  latitude  Float?
-  longitude Float?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id         Int         @id @default(autoincrement())
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     Int
+  question   String      @db.MediumText
+  answers    Answer[]
+  wonderings Wondering[]
+  latitude   Float?
+  longitude  Float?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
   @@index([userId])
 }
@@ -170,7 +170,7 @@ model Stream {
   userId      Int
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  message     Message[]
+  messages    Message[]
 
   @@index([userId])
 }

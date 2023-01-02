@@ -16,7 +16,7 @@ const Live: NextPage = () => {
     <Layout title="라이브" hasTabBar>
       <div className="divide-y-[1px] space-y-4">
         {data?.streams.map((stream) => (
-          <Link href={`/stream/${stream.id}`} legacyBehavior key={stream.id}>
+          <Link href={`/streams/${stream.id}`} legacyBehavior key={stream.id}>
             <a className="px-4 block pt-4">
               <div className="bg-slate-300 w-full rounded-md shadow-sm aspect-video" />
               <h1 className="text-2xl mt-2 font-bold text-gray-900">

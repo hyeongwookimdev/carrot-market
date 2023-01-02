@@ -4,17 +4,51 @@ import Message from "@components/message";
 import useSWR from "swr";
 import { useRouter } from "next/router";
 import { Stream } from "@prisma/client";
+import { useForm } from "react-hook-form";
+import useMutation from "@libs/client/useMutation";
+import useUser from "@libs/client/useUser";
+import { useEffect } from "react";
 
+interface StreamMessage {
+  id: number;
+  message: string;
+  user: {
+    avatar?: string;
+    id: number;
+  };
+}
+interface StreamWithMessages extends Stream {
+  messages: StreamMessage[];
+}
 interface StreamResponse {
   ok: true;
-  stream: Stream;
+  stream: StreamWithMessages;
+}
+
+interface MessageForm {
+  message: string;
 }
 
 const LiveDetail: NextPage = () => {
+  const { user } = useUser();
   const router = useRouter();
-  const { data } = useSWR<StreamResponse>(
+  const { register, handleSubmit, reset } = useForm<MessageForm>();
+  const { data, mutate } = useSWR<StreamResponse>(
     router.query.id ? `/api/streams/${router.query.id}` : null
   );
+  const [sendMessage, { loading, data: sendMessageData }] = useMutation(
+    `/api/streams/${router.query.id}/messages`
+  );
+  const onValid = (form: MessageForm) => {
+    if (loading) return;
+    reset();
+    sendMessage(form);
+  };
+  useEffect(() => {
+    if (sendMessageData && sendMessageData.ok) {
+      mutate();
+    }
+  }, [sendMessageData, mutate]);
 
   return (
     <Layout canGoBack>
@@ -32,14 +66,23 @@ const LiveDetail: NextPage = () => {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Live Chat</h2>
           <div className="py-10 pb-16 h-[50vh] overflow-y-scroll px-4 space-y-4">
-            <Message message="리자몽 스티커 얼만가요?" />
-            <Message message="2만원이요" reversed />
-            <Message message="안사요" />
+            {data?.stream?.messages.map((message) => (
+              <Message
+                key={message.id}
+                message={message.message}
+                avatarUrl={message.user.avatar}
+                reversed={message.user.id === user?.id}
+              />
+            ))}
           </div>
           <div className="fixed w-full mx-auto max-w-md bottom-2 inset-x-0">
-            <div className="flex relative items-center">
+            <form
+              onSubmit={handleSubmit(onValid)}
+              className="flex relative items-center"
+            >
               <input
                 type="text"
+                {...register("message", { required: true })}
                 className="pr-12 shadow-sm rounded-full w-full border-gray-300 focus:ring-orange-500 focus:outline-none focus:border-orange-500"
               />
               <div className="absolute inset-y-0 flex py-1.5 pr-1.5 right-0">
@@ -47,7 +90,7 @@ const LiveDetail: NextPage = () => {
                   &rarr;
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       </div>
