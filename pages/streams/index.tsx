@@ -4,6 +4,8 @@ import FloatingButton from "@components/floating-button";
 import Layout from "@components/layout";
 import { Stream } from "@prisma/client";
 import useSWR from "swr";
+import { useEffect, useState } from "react";
+import useSWRInfinite from "swr/infinite";
 
 interface StreamsResponse {
   ok: boolean;
@@ -11,11 +13,22 @@ interface StreamsResponse {
 }
 
 const Live: NextPage = () => {
-  const { data } = useSWR<StreamsResponse>(`/api/streams`);
+  const [page, setPage] = useState(1);
+  const { data } = useSWR<StreamsResponse>(`/api/streams?page=${page}`);
+
+  const onNextPageClick = () => {
+    setPage((prev) => prev + 1);
+  };
+
+  const onPrevPageClick = () => {
+    if (page === 1) return;
+    setPage((prev) => prev - 1);
+  };
+
   return (
     <Layout title="라이브" hasTabBar>
       <div className="divide-y-[1px] space-y-4">
-        {data?.streams.map((stream) => (
+        {data?.streams?.map((stream) => (
           <Link href={`/streams/${stream.id}`} legacyBehavior key={stream.id}>
             <a className="px-4 block pt-4">
               <div className="bg-slate-300 w-full rounded-md shadow-sm aspect-video" />
@@ -25,7 +38,12 @@ const Live: NextPage = () => {
             </a>
           </Link>
         ))}
-        <FloatingButton href="/stream/create">
+        <div className="flex justify-center space-x-20 text-2xl">
+          <button onClick={onPrevPageClick}>⬅️</button>
+          <button onClick={onNextPageClick}>➡️</button>
+        </div>
+
+        <FloatingButton href="/streams/create">
           <svg
             className="w-6 h-6"
             fill="none"
