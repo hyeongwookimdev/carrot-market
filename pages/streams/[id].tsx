@@ -1,24 +1,33 @@
 import { NextPage } from "next";
 import Layout from "@components/layout";
 import Message from "@components/message";
+import useSWR from "swr";
+import { useRouter } from "next/router";
+import { Stream } from "@prisma/client";
+
+interface StreamResponse {
+  ok: true;
+  stream: Stream;
+}
 
 const LiveDetail: NextPage = () => {
+  const router = useRouter();
+  const { data } = useSWR<StreamResponse>(
+    router.query.id ? `/api/streams/${router.query.id}` : null
+  );
+
   return (
     <Layout canGoBack>
       <div className="px-4 py-10 space-y-4">
         <div className="bg-slate-300 w-full rounded-md shadow-sm aspect-video" />
         <div className="mt-5">
-          <h1 className="text-3xl font-bold text-gray-900">리자몽 스티커</h1>
-          <span className="text-2xl block mt-3 text-gray-900">$20</span>
-          <p className=" my-6 text-gray-700">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eius nam,
-            nobis reprehenderit dicta impedit nemo, hic, quia porro officia
-            assumenda deserunt quibusdam nostrum magnam fugiat. Beatae atque
-            quisquam fugit nemo? Lorem, ipsum dolor sit amet consectetur
-            adipisicing elit. Nam adipisci molestiae cupiditate incidunt aut
-            magni, dolorum laborum optio facere placeat labore exercitationem
-            accusantium quasi magnam est voluptatibus explicabo, non deleniti.
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {data?.stream?.name}
+          </h1>
+          <span className="text-2xl block mt-3 text-gray-900">
+            ${data?.stream?.price}
+          </span>
+          <p className=" my-6 text-gray-700">{data?.stream?.description}</p>
         </div>
         <div>
           <h2 className="text-2xl font-bold text-gray-900">Live Chat</h2>
