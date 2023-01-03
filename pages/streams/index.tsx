@@ -4,31 +4,44 @@ import FloatingButton from "@components/floating-button";
 import Layout from "@components/layout";
 import { Stream } from "@prisma/client";
 import useSWR from "swr";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import useSWRInfinite from "swr/infinite";
 
 interface StreamsResponse {
   ok: boolean;
   streams: Stream[];
+  pages: number;
 }
 
 const Live: NextPage = () => {
-  const [page, setPage] = useState(1);
-  const { data } = useSWR<StreamsResponse>(`/api/streams?page=${page}`);
-
-  const onNextPageClick = () => {
-    setPage((prev) => prev + 1);
+  const getKey = (pageIndex: number, previousPageData: StreamsResponse) => {
+    if (pageIndex === 0) return `/api/streams?page=1`;
+    if (pageIndex + 1 > previousPageData.pages) return null;
+    return `/api/streams?page=${pageIndex + 1}`;
   };
+  const { data, size, setSize } = useSWRInfinite<StreamsResponse>(getKey);
 
-  const onPrevPageClick = () => {
-    if (page === 1) return;
-    setPage((prev) => prev - 1);
-  };
+  const streams = data ? data.map((stream) => stream.streams).flat() : [];
+
+  function handleScroll() {
+    if (
+      document.documentElement.scrollTop + window.innerHeight ===
+      document.documentElement.scrollHeight
+    ) {
+      setSize((p) => p + 1);
+    }
+  }
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
 
   return (
     <Layout title="라이브" hasTabBar>
       <div className="divide-y-[1px] space-y-4">
-        {data?.streams?.map((stream) => (
+        {streams.map((stream) => (
           <Link href={`/streams/${stream.id}`} legacyBehavior key={stream.id}>
             <a className="px-4 block pt-4">
               <div className="bg-slate-300 w-full rounded-md shadow-sm aspect-video" />
@@ -38,10 +51,6 @@ const Live: NextPage = () => {
             </a>
           </Link>
         ))}
-        <div className="flex justify-center space-x-20 text-2xl">
-          <button onClick={onPrevPageClick}>⬅️</button>
-          <button onClick={onNextPageClick}>➡️</button>
-        </div>
 
         <FloatingButton href="/streams/create">
           <svg

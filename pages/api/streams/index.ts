@@ -29,15 +29,13 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   } else if (req.method === "GET") {
     const { page } = req.query;
 
-    let currentPage = page && page !== undefined ? +page - 1 : 1;
-
-    console.log(currentPage);
+    const streamCount = await client.product.count();
 
     const streams = await client.stream.findMany({
       take: 10,
-      skip: currentPage * 10,
+      skip: (Number(page) - 1) * 10,
     });
-    res.json({ ok: true, streams });
+    res.json({ ok: true, streams, pages: Math.ceil(streamCount / 10) });
   }
 }
 
